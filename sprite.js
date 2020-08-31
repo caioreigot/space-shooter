@@ -28,3 +28,5 @@ const sprite3Lifes = new Sprite(1011, 30, 148, 37);
 const sprite2Lifes = new Sprite(1011, 83, 148, 37); 
 const sprite1Lifes = new Sprite(1011, 133, 148, 37);
 const sprite0Lifes = new Sprite(1011, 182, 148, 37);
+
+const spriteLifeBonus = new Sprite(934, 159, 30, 30);
