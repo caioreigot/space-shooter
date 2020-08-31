@@ -3,13 +3,13 @@ const ctx = canvas.getContext('2d');
 
 // TODO
 /*
- * Speed Bonûs (cai como se fosse uma enemySpaceship)
- * Score
+ * Tela game over e de play
+ * Speed Bonus (cai como se fosse uma enemySpaceship)
  * Boss
  * Dificuldade (levelSpeed)
 */
 
-let keys = {}, currentState, levelSpeed = 70,
+let keys = {}, currentState, levelSpeed = 50,
 
 states = {
     play: 0,
@@ -23,21 +23,23 @@ enemySpaceship = {
     
     width: 50,
     height: 40,
-    speed: 5,
+    speed: 4,
     lifes: 2,
     insertTime: 0,
 
     // Function responsible for inserting "enemy ships" in the _enemies array
     insert() {
-        this._enemys.push({
-            x: 5 + Math.floor(840 * Math.random()),
-            y: -20,
-            width: this.width,
-            height: this.height
-        })
-
-        // Related to the time each ship will appear
-        this.insertTime = levelSpeed + Math.floor(21 * Math.random());
+        if (currentState != states.lose) {
+            this._enemys.push({
+                x: 5 + Math.floor(840 * Math.random()),
+                y: -20,
+                width: this.width,
+                height: this.height
+            })
+    
+            // Related to the time each ship will appear
+            this.insertTime = levelSpeed + Math.floor(21 * Math.random());
+        }
     },
 
     update() {
@@ -55,6 +57,7 @@ enemySpaceship = {
 
             if (enemy.y > canvas.height) {
                 this._enemys.splice(i, 1);
+                spaceship.lifes -= 1;
             }
 
         }
@@ -81,6 +84,7 @@ spaceship = {
     width: 60, 
     height: 50,
     speed: 12,
+    score: 0,
     lifes: 3,
 
     update() {
@@ -92,11 +96,28 @@ spaceship = {
             this.x += this.speed;
         }
 
+        if (this.lifes == 0) {
+            currentState = states.lose;
+
+            if (this.score > record) {
+                // Storing the score in local storage, so as not to delete when closing the site or browser
+                localStorage.setItem("record", this.score);
+                record = this.score;
+            }
+        }
+
     },
 
     draw() {
         spriteSpaceship.draw(this.x, this.y);
         // ctx.fillRect(spaceship.x, spaceship.y, spaceship.width, spaceship.height);
+    },
+
+    reset() {
+        this.x = canvas.width / 2 - 30;
+        this.y = canvas.height - 60;
+        this.speed = 12;
+        this.score = 0;
     }
 },
 
@@ -137,6 +158,7 @@ shot = {
                                 this._shots.splice(i, 1);
                                 // If the shot strikes the ship, remove the ship from the enemys array
                                 enemySpaceship._enemys.splice(0, 1)
+                                spaceship.score++;
                             }
                         }
                     }
@@ -183,11 +205,31 @@ function draw() {
 
     bg.draw(0, 0);
 
-    ctx.fillStyle = '#fff';
-
     spaceship.draw();
     enemySpaceship.draw();
     shot.draw();
+
+    // Score
+    ctx.fillStyle = '#fff';
+    ctx.font = "50px Arial";
+    ctx.fillText(spaceship.score, 30, 68);
+
+    // if (currentState == playing) {}
+    if (spaceship.lifes == 3) {
+        sprite3Lifes.draw(730, 20);
+    } else if (spaceship.lifes == 2) {
+        sprite2Lifes.draw(730, 20);
+    } else if (spaceship.lifes == 1) {
+        sprite1Lifes.draw(730, 20);
+    } else {
+        sprite0Lifes.draw(730, 20);
+    }
+
+    if (currentState == states.lose) {
+        enemySpaceship.clean();
+        spaceship.reset();
+    }
+
 }
 
 function Bullet(x, y, width, height) {
@@ -234,7 +276,6 @@ function main() {
     if (record == null) {
         record = 0;
     }
-
 
     // Storing record in localStorage
     // localStorage.setItem("record", this.score); <- atualizando record
