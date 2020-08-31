@@ -1,2 +1,2 @@
-# space-shooter
-  Arcade-style shooting game with spaceships, made in JavaScript
+# Space Shooter
+Arcade-style shooting game with spaceships, made in JavaScript
