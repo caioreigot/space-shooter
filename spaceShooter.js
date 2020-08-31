@@ -3,13 +3,13 @@ const ctx = canvas.getContext('2d');
 
 // TODO
 /*
- * Meteoros (ao colidir com a nave, são retiradas da tela e spaceship.lifes -= 1)
  * Inimigos diferentes (se mexem pro lado, atiram, etc)
- * Speed Bonus (cai como se fosse uma enemySpaceship)
+ * Speed Bônus (cai como se fosse uma enemySpaceship)
  * Boss
 */
 
-let keys = {}, currentState, enemyInsertionSpeed = 45, meteorInsertionSpeed = 100,
+// Game variables
+let keys = {}, currentState, enemyInsertionSpeed = 60, meteorInsertionSpeed = 200, bossPhase = false,
 
 states = {
     play: 0,
@@ -29,7 +29,7 @@ enemySpaceship = {
 
     // Function responsible for inserting "enemy ships" in the _enemies array
     insert() {
-        if (currentState == states.playing && currentState != states.lose) {
+        if (currentState == states.playing && currentState != states.lose && bossPhase == false) {
             this._enemys.push({
                 x: 5 + Math.floor(840 * Math.random()),
                 y: -20,
@@ -75,7 +75,8 @@ enemySpaceship = {
 
     clean() {
         this._enemys = [];
-    }
+    },
+
 },
 
 meteor = {
@@ -85,7 +86,7 @@ meteor = {
 
     width: 50,
     height: 40,
-    downSpeed: 2,
+    downSpeed: 1,
     insertTime: 0,
 
     // Function responsible for inserting meteors in the _meteors array
@@ -188,13 +189,19 @@ spaceship = {
             }
         }
 
-        // Increasing enemy insertion speed (difficulty)
+        // Increasing enemy and meteor insertion time (difficulty)
         if (this.score == 25) {
-            enemyInsertionSpeed = 35;
+            enemyInsertionSpeed = 45;
+            meteorInsertionSpeed = 170;
         }
 
         if (this.score == 50) {
-            enemyInsertionSpeed = 25
+            enemyInsertionSpeed = 35;
+            meteorInsertionSpeed = 140;
+        }
+
+        if (this.score == 75) {
+            bossPhase = true;
         }
 
     },
@@ -353,13 +360,15 @@ function draw() {
         meteor.clean();
         spaceship.resetPosition();
 
+        bossPhase = false;
+
         spriteScoreboard.draw(canvas.width / 2 - spriteScoreboard.width / 2, canvas.height / 2 - spriteScoreboard.height / 2);
 
         // Showing the score and record on the scoreboard
         if (spaceship.score < 10) {
             ctx.fillText(spaceship.score, canvas.width / 2 + 84, canvas.height / 2 - 9.5);
         } else if (spaceship.score >= 10 && spaceship.score < 100) {
-            ctx.fillText(spaceship.score, canvas.width / 2 + 68, canvas.height / 2 - 9.5);
+            ctx.fillText(spaceship.score, canvas.width / 2 + 70, canvas.height / 2 - 9.5);
         } else if (spaceship.score >= 100 && spaceship.score < 1000) {
             ctx.fillText(spaceship.score, canvas.width / 2 + 56, canvas.height / 2 - 9.5);
         } else {
@@ -384,6 +393,12 @@ function draw() {
 
 }
 
+// Used to go back to the default "difficulty"
+function resetSpeed() {
+    enemyInsertionSpeed = 60;
+    meteorInsertionSpeed = 200;
+}
+
 function Bullet(x, y, width, height) {
     this.x = x;
     this.y = y;
@@ -401,9 +416,10 @@ function onMouseDown(e) {
     }
 
     if (e.button == 0 && currentState == states.lose) {
-        currentState = states.playing;
+        currentState = states.play;
         spaceship.resetScore();
         spaceship.resetLife();
+        resetSpeed();
     }
 }
 
@@ -418,7 +434,7 @@ function onKeyDown(e) {
     if (e.keyCode == 32 && currentState == states.play) {
         currentState = states.playing;
     } else if (e.keyCode == 32 && currentState == states.lose) {
-        currentState = states.playing;
+        currentState = states.play;
         spaceship.resetScore();
         spaceship.resetLife();
     }
