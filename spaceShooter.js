@@ -158,8 +158,8 @@ shot = {
             for (i in this._shots) {
                 let shot = this._shots[i]
 
-                // If your Y is less than 0px (range of canvas height), keep decreasing the speed of shot
-                if (shot.y >= 0) {
+                // If your Y is less than 0px (range of canvas height - shot.height), keep decreasing the speed of shot
+                if (shot.y >= 10) {
                     this._shots[i].y -= this.speed;
                     
                     // Loop to check if the bullet will hit enemy aircraft (j)
