@@ -20,7 +20,7 @@ const spriteMeteor1 = new Sprite(1185, 30, 50, 40);
 const spriteMeteor2 = new Sprite(1185, 86, 50, 40);
 
 // "Menus"
-const spritePlayButton = new Sprite(923, 240, 371, 353);
+const spritePlay = new Sprite(1920, 0, 900, 600);
 const spriteScoreboard = new Sprite(1298, 16, 589, 476);
 const spriteNew = new Sprite(1366, 527, 88, 55);
 

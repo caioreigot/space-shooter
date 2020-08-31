@@ -2,9 +2,8 @@ const canvas = document.getElementById('mycanvas');
 const ctx = canvas.getContext('2d');
 
 // TODO
-/*
+/* Trocar o botão de play por um "guia do jogo"
  * Inimigos diferentes (se mexem pro lado, atiram, etc)
- * Speed Bônus (cai como se fosse uma enemySpaceship)
  * Boss
 */
 
@@ -496,7 +495,7 @@ function draw() {
     ctx.font = "50px Arial";
     
     if (currentState == states.play) {
-        spritePlayButton.draw(canvas.width / 2 - spritePlayButton.width / 2, canvas.height / 2 - spritePlayButton.height / 2);
+        spritePlay.draw(canvas.width / 2 - spritePlay.width / 2, canvas.height / 2 - spritePlay.height / 2);
     }
 
     if (currentState == states.playing) {
@@ -528,6 +527,8 @@ function draw() {
     if (currentState == states.lose) {
         enemySpaceship.clean();
         meteor.clean();
+        lifeBonus.clean();
+
         spaceship.resetPosition();
 
         bossPhase = false;
