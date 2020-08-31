@@ -414,6 +414,7 @@ shot = {
                             shot.x + shot.width >= enemyJ.x 
                             && shot.x <= enemyJ.x + enemyJ.width 
                             && shot.y <= enemyJ.y + enemyJ.height
+                            && shot.y + enemyJ.height >= enemyJ.y
                             ) {
                             this._shots.splice(i, 1);
 
@@ -433,6 +434,7 @@ shot = {
                             shot.x + shot.width >= meteorK.x 
                             && shot.x <= meteorK.x + meteorK.width 
                             && shot.y <= meteorK.y + meteorK.height
+                            && shot.y + shot.height >= meteorK.y
                            ) {
                                this._shots.splice(i, 1);
 
