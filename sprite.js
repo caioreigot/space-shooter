@@ -12,11 +12,15 @@ function Sprite(x, y, width, height) {
 const bg = new Sprite(0, 0, 900, 600);
 
 const spriteSpaceship = new Sprite(920, 16, 60, 50);
-const spriteEnemySpaceship = new Sprite(925, 81, 50, 40)
 const spriteShoot = new Sprite(934, 137, 30, 10);
 
+const spriteEnemySpaceship = new Sprite(925, 81, 50, 40)
+
+const spriteMeteor1 = new Sprite(1185, 30, 50, 40);
+const spriteMeteor2 = new Sprite(1185, 86, 50, 40);
+
 // "Menus"
-const spritePlayButton = new Sprite(916, 222, 375, 375);
+const spritePlayButton = new Sprite(923, 240, 371, 353);
 const spriteScoreboard = new Sprite(1298, 16, 589, 476);
 const spriteNew = new Sprite(1366, 527, 88, 55);
 
