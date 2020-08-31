@@ -83,7 +83,8 @@ spaceship = {
     y: canvas.height - 60,
     width: 60, 
     height: 50,
-    speed: 12,
+    leftRightSpeed: 12,
+    upDownSpeed: 10,
     score: 0,
     lifes: 3,
 
@@ -91,9 +92,16 @@ spaceship = {
 
         // keyCode A = 65 | keyCode D = 68
         if (65 in keys && this.x > 0 && currentState == states.playing) {
-            this.x -= this.speed;
+            this.x -= this.leftRightSpeed;
         } else if (68 in keys && this.x < canvas.width - this.width && currentState == states.playing) {
-            this.x += this.speed;
+            this.x += this.leftRightSpeed;
+        }
+        
+        // keyCode S = 83 | keyCode W = 87
+        if (83 in keys && this.y < canvas.height - spaceship.height && currentState == states.playing) {
+            this.y += this.upDownSpeed;
+        } else if (87 in keys && this.y > 0 && currentState == states.playing) {
+            this.y -= this.upDownSpeed;
         }
 
         if (this.lifes == 0) {
