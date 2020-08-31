@@ -9,7 +9,7 @@ const ctx = canvas.getContext('2d');
  * Dificuldade (levelSpeed)
 */
 
-let keys = {}, currentState, levelSpeed = 50,
+let keys = {}, currentState, levelSpeed = 35,
 
 states = {
     play: 0,
@@ -24,12 +24,12 @@ enemySpaceship = {
     width: 50,
     height: 40,
     speed: 4,
-    lifes: 2,
+    lifes: 1,
     insertTime: 0,
 
     // Function responsible for inserting "enemy ships" in the _enemies array
     insert() {
-        if (currentState != states.lose) {
+        if (currentState == states.playing && currentState != states.lose) {
             this._enemys.push({
                 x: 5 + Math.floor(840 * Math.random()),
                 y: -20,
@@ -90,9 +90,9 @@ spaceship = {
     update() {
 
         // keyCode A = 65 | keyCode D = 68
-        if (65 in keys && this.x > 0) {
+        if (65 in keys && this.x > 0 && currentState == states.playing) {
             this.x -= this.speed;
-        } else if (68 in keys && this.x < canvas.width - this.width) {
+        } else if (68 in keys && this.x < canvas.width - this.width && currentState == states.playing) {
             this.x += this.speed;
         }
 
@@ -113,12 +113,27 @@ spaceship = {
         // ctx.fillRect(spaceship.x, spaceship.y, spaceship.width, spaceship.height);
     },
 
-    reset() {
+    resetPosition() {
         this.x = canvas.width / 2 - 30;
         this.y = canvas.height - 60;
         this.speed = 12;
+    },
+
+    resetScore() {
+
+        if (this.score > record) {
+            // Storing the score in local storage, so as not to delete when closing the site or browser
+            localStorage.setItem("record", this.score);
+            record = this.score;
+        }
+
         this.score = 0;
+    },
+
+    resetLife() {
+        this.lifes = 3;
     }
+    
 },
 
 shot = {
@@ -131,36 +146,35 @@ shot = {
 
     fire() {
         // When space is pressed, a new Bullet object will be instantiated
-        this._shots.push(new Bullet(spaceship.x + spaceship.width / 2 - 15, spaceship.y, this.width, this.height));
+        if (currentState == states.playing && currentState != states.lose)
+            this._shots.push(new Bullet(spaceship.x + spaceship.width / 2 - 15, spaceship.y, this.width, this.height));
     },
 
     update() {
 
         // Each bullet is an object within the _shots array
         if (this._shots.length != 0) {
+            // Loop to look at each bullet (i) and see if it will collide or leave the screen
             for (i in this._shots) {
-
                 let shot = this._shots[i]
 
-                // If your Y is less than 150px (range of shot), keep decreasing the speed
-                if (shot.y >= 150) {
+                // If your Y is less than 0px (range of canvas height), keep decreasing the speed of shot
+                if (shot.y >= 0) {
                     this._shots[i].y -= this.speed;
                     
-                    // Loop to check if the bullet will hit enemy aircraft
-                    for (let i = 0; i < enemySpaceship._enemys.length; i++) {
-                        let enemy = enemySpaceship._enemys[0];
+                    // Loop to check if the bullet will hit enemy aircraft (j)
+                    for (let j = 0; j < enemySpaceship._enemys.length; j++) {
+                        let enemy = enemySpaceship._enemys[j];
 
-                        if (shot.y <= enemy.y + enemy.height) {
+                        // Colliding with enemy spaceships
+                        if (shot.x + shot.width >= enemy.x && shot.x <= enemy.x + enemy.width && shot.y <= enemy.y + enemy.height) {
                             this._shots.splice(i, 1);
 
-                            // Colliding with enemy spaceships
-                            if (shot.x + shot.width >= enemy.x && shot.x <= enemy.x + enemy.width) {
-                                this._shots.splice(i, 1);
-                                // If the shot strikes the ship, remove the ship from the enemys array
-                                enemySpaceship._enemys.splice(0, 1)
-                                spaceship.score++;
-                            }
+                            // If the shot strikes the ship, remove the ship from the enemys array
+                            enemySpaceship._enemys.splice(j, 1)
+                            spaceship.score++;
                         }
+                        
                     }
 
                 } else { // If reach the end of the screen, remove the shot from the array
@@ -201,33 +215,73 @@ function update() {
 }
 
 function draw() {
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    // ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     bg.draw(0, 0);
-
-    spaceship.draw();
-    enemySpaceship.draw();
-    shot.draw();
 
     // Score
     ctx.fillStyle = '#fff';
     ctx.font = "50px Arial";
-    ctx.fillText(spaceship.score, 30, 68);
-
-    // if (currentState == playing) {}
-    if (spaceship.lifes == 3) {
-        sprite3Lifes.draw(730, 20);
-    } else if (spaceship.lifes == 2) {
-        sprite2Lifes.draw(730, 20);
-    } else if (spaceship.lifes == 1) {
-        sprite1Lifes.draw(730, 20);
-    } else {
-        sprite0Lifes.draw(730, 20);
+    
+    if (currentState == states.play) {
+        spritePlayButton.draw(canvas.width / 2 - spritePlayButton.width / 2, canvas.height / 2 - spritePlayButton.height / 2);
     }
 
+    if (currentState == states.playing) {
+        spaceship.draw();
+        enemySpaceship.draw();
+        shot.draw();
+
+        ctx.fillText(spaceship.score, 30, 68);
+    }
+
+
+    // Keep drawing spaceship life when lose the game
+    if (currentState == states.playing || currentState == states.lose) {
+
+        if (spaceship.lifes == 3) {
+            sprite3Lifes.draw(730, 20);
+        } else if (spaceship.lifes == 2) {
+            sprite2Lifes.draw(730, 20);
+        } else if (spaceship.lifes == 1) {
+            sprite1Lifes.draw(730, 20);
+        } else {
+            sprite0Lifes.draw(730, 20);
+        }
+    }
+
+    // When losing, show the scoreboard, with the player's score and his record
     if (currentState == states.lose) {
         enemySpaceship.clean();
-        spaceship.reset();
+        spaceship.resetPosition();
+
+        spriteScoreboard.draw(canvas.width / 2 - spriteScoreboard.width / 2, canvas.height / 2 - spriteScoreboard.height / 2);
+
+        // Showing the score and record on the scoreboard
+        if (spaceship.score < 10) {
+            ctx.fillText(spaceship.score, canvas.width / 2 + 84, canvas.height / 2 - 9.5);
+        } else if (spaceship.score >= 10 && spaceship.score < 100) {
+            ctx.fillText(spaceship.score, canvas.width / 2 + 68, canvas.height / 2 - 9.5);
+        } else if (spaceship.score >= 100 && spaceship.score < 1000) {
+            ctx.fillText(spaceship.score, canvas.width / 2 + 56, canvas.height / 2 - 9.5);
+        } else {
+            ctx.fillText(spaceship.score, canvas.width / 2 + 42, canvas.height / 2 - 9.5);
+        }
+
+        if (record < 10) {
+            ctx.fillText(record, canvas.width / 2 + 84, canvas.height / 2 + 83);
+        } else if (record >= 10 && record < 100) {
+            ctx.fillText(record, canvas.width / 2 + 68, canvas.height / 2 + 83);
+        } else if (record >= 100 && record < 1000) {
+            ctx.fillText(record, canvas.width / 2 + 56, canvas.height / 2 + 83);
+        } else {
+            ctx.fillText(record, canvas.width / 2 + 42, canvas.height / 2 + 83);
+        }
+
+        if (spaceship.score > record - 1) {
+            spriteNew.draw(canvas.width / 2 - spriteNew.width / 2 + 160, canvas.height / 2 - spriteNew.height / 2 + 105);
+        }
+
     }
 
 }
@@ -243,6 +297,16 @@ function onMouseDown(e) {
     if (e.button == 0) {
         shot.fire();
     }
+
+    if (e.button == 0 && currentState == states.play) {
+        currentState = states.playing;
+    }
+
+    if (e.button == 0 && currentState == states.lose) {
+        currentState = states.playing;
+        spaceship.resetScore();
+        spaceship.resetLife();
+    }
 }
 
 function onKeyDown(e) {
@@ -251,6 +315,14 @@ function onKeyDown(e) {
     // keyCode spacebar = 32
     if (e.keyCode == 32) {
         shot.fire();
+    }
+
+    if (e.keyCode == 32 && currentState == states.play) {
+        currentState = states.playing;
+    } else if (e.keyCode == 32 && currentState == states.lose) {
+        currentState = states.playing;
+        spaceship.resetScore();
+        spaceship.resetLife();
     }
 }
 
@@ -277,9 +349,6 @@ function main() {
         record = 0;
     }
 
-    // Storing record in localStorage
-    // localStorage.setItem("record", this.score); <- atualizando record
-    
     run();
 }
 
