@@ -17,13 +17,95 @@ states = {
     lose: 2
 },
 
+spaceship = {
+    x: canvas.width / 2 - 30,
+    y: canvas.height - 60,
+    width: 60, 
+    height: 50,
+    leftRightSpeed: 12,
+    upDownSpeed: 10,
+    score: 0,
+    lifes: 3,
+
+    update() {
+
+        // keyCode A = 65 | keyCode D = 68
+        if (65 in keys && this.x > 0 && currentState == states.playing) {
+            this.x -= this.leftRightSpeed;
+        } else if (68 in keys && this.x < canvas.width - this.width && currentState == states.playing) {
+            this.x += this.leftRightSpeed;
+        }
+        
+        // keyCode S = 83 | keyCode W = 87
+        if (83 in keys && this.y < canvas.height - spaceship.height && currentState == states.playing) {
+            this.y += this.upDownSpeed;
+        } else if (87 in keys && this.y > 0 && currentState == states.playing) {
+            this.y -= this.upDownSpeed;
+        }
+
+        if (this.lifes == 0) {
+            currentState = states.lose;
+
+            if (this.score > record) {
+                // Storing the score in local storage, so as not to delete when closing the site or browser
+                localStorage.setItem("record", this.score);
+                record = this.score;
+            }
+        }
+
+        // Increasing enemy and meteor insertion time (difficulty)
+        if (this.score == 25) {
+            enemyInsertionSpeed = 45;
+            meteorInsertionSpeed = 170;
+        }
+
+        if (this.score == 50) {
+            enemyInsertionSpeed = 35;
+            meteorInsertionSpeed = 140;
+            enemySpaceship.speed = 4;
+        }
+
+        if (this.score == 75) {
+            bossPhase = true;
+        }
+
+    },
+
+    draw() {
+        spriteSpaceship.draw(this.x, this.y);
+        // ctx.fillRect(spaceship.x, spaceship.y, spaceship.width, spaceship.height);
+    },
+
+    resetPosition() {
+        this.x = canvas.width / 2 - 30;
+        this.y = canvas.height - 60;
+        this.speed = 12;
+    },
+
+    resetScore() {
+
+        if (this.score > record) {
+            // Storing the score in local storage, so as not to delete when closing the site or browser
+            localStorage.setItem("record", this.score);
+            record = this.score;
+        }
+
+        this.score = 0;
+    },
+
+    resetLife() {
+        this.lifes = 3;
+    }
+    
+},
+
 enemySpaceship = {
 
     _enemys: [],
     
     width: 50,
     height: 40,
-    speed: enemyInsertionSpeed / 15,
+    speed: 3,
     lifes: 1,
     insertTime: 0,
 
@@ -151,87 +233,6 @@ meteor = {
         this._meteors = [];
     }
 
-},
-
-spaceship = {
-    x: canvas.width / 2 - 30,
-    y: canvas.height - 60,
-    width: 60, 
-    height: 50,
-    leftRightSpeed: 12,
-    upDownSpeed: 10,
-    score: 0,
-    lifes: 3,
-
-    update() {
-
-        // keyCode A = 65 | keyCode D = 68
-        if (65 in keys && this.x > 0 && currentState == states.playing) {
-            this.x -= this.leftRightSpeed;
-        } else if (68 in keys && this.x < canvas.width - this.width && currentState == states.playing) {
-            this.x += this.leftRightSpeed;
-        }
-        
-        // keyCode S = 83 | keyCode W = 87
-        if (83 in keys && this.y < canvas.height - spaceship.height && currentState == states.playing) {
-            this.y += this.upDownSpeed;
-        } else if (87 in keys && this.y > 0 && currentState == states.playing) {
-            this.y -= this.upDownSpeed;
-        }
-
-        if (this.lifes == 0) {
-            currentState = states.lose;
-
-            if (this.score > record) {
-                // Storing the score in local storage, so as not to delete when closing the site or browser
-                localStorage.setItem("record", this.score);
-                record = this.score;
-            }
-        }
-
-        // Increasing enemy and meteor insertion time (difficulty)
-        if (this.score == 25) {
-            enemyInsertionSpeed = 45;
-            meteorInsertionSpeed = 170;
-        }
-
-        if (this.score == 50) {
-            enemyInsertionSpeed = 35;
-            meteorInsertionSpeed = 140;
-        }
-
-        if (this.score == 75) {
-            bossPhase = true;
-        }
-
-    },
-
-    draw() {
-        spriteSpaceship.draw(this.x, this.y);
-        // ctx.fillRect(spaceship.x, spaceship.y, spaceship.width, spaceship.height);
-    },
-
-    resetPosition() {
-        this.x = canvas.width / 2 - 30;
-        this.y = canvas.height - 60;
-        this.speed = 12;
-    },
-
-    resetScore() {
-
-        if (this.score > record) {
-            // Storing the score in local storage, so as not to delete when closing the site or browser
-            localStorage.setItem("record", this.score);
-            record = this.score;
-        }
-
-        this.score = 0;
-    },
-
-    resetLife() {
-        this.lifes = 3;
-    }
-    
 },
 
 shot = {
@@ -397,6 +398,7 @@ function draw() {
 function resetSpeed() {
     enemyInsertionSpeed = 60;
     meteorInsertionSpeed = 200;
+    enemySpaceship.speed = 2;
 }
 
 function Bullet(x, y, width, height) {
