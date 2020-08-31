@@ -62,7 +62,6 @@ spaceship = {
         if (this.score == 50) {
             enemyInsertionSpeed = 35;
             meteorInsertionSpeed = 160;
-            enemySpaceship.speed = 3.5;
         }
 
         if (this.score == 75) {
