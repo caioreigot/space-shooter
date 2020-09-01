@@ -243,7 +243,8 @@ shot = {
 
                     // Colliding with alien boss
                     if (
-                        shot.y <= alienBoss.y + alienBoss.height
+                        bossPhase == true && spaceship.score == 75
+                        && shot.y <= alienBoss.y + alienBoss.height
                         && shot.x >= alienBoss.x
                         && shot.x <= alienBoss.x + alienBoss.width
                         ) {
