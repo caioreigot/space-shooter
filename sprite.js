@@ -30,3 +30,6 @@ const sprite1Lifes = new Sprite(1011, 133, 148, 37);
 const sprite0Lifes = new Sprite(1011, 182, 148, 37);
 
 const spriteLifeBonus = new Sprite(934, 159, 30, 30);
+
+const spriteAlienBoss = new Sprite(935, 259, 320, 150);
+const spriteAlienBossShot = new Sprite(920, 434, 35, 50);

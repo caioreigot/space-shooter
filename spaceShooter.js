@@ -1,12 +1,6 @@
 const canvas = document.getElementById('mycanvas');
 const ctx = canvas.getContext('2d');
 
-// TODO
-/* Trocar o botão de play por um "guia do jogo"
- * Inimigos diferentes (se mexem pro lado, atiram, etc)
- * Boss
-*/
-
 // Game variables
 let keys = {}, currentState, enemyInsertionSpeed = 60, meteorInsertionSpeed = 200, bossPhase = false,
 
@@ -39,7 +33,15 @@ spaceship = {
         if (83 in keys && this.y < canvas.height - spaceship.height && currentState == states.playing) {
             this.y += this.upDownSpeed;
         } else if (87 in keys && this.y > 0 && currentState == states.playing) {
-            this.y -= this.upDownSpeed;
+            if (bossPhase == false)
+                this.y -= this.upDownSpeed;
+
+            // Do not pass the y axis of each boss
+            else if (spaceship.score == 75) {
+                if (spaceship.y >= 190)
+                    this.y -= this.upDownSpeed;
+            }
+
         }
 
         if (this.lifes == 0) {
@@ -64,8 +66,8 @@ spaceship = {
         }
 
         if (this.score == 75) {
+            enemySpaceship.clean();
             bossPhase = true;
-            // call the insert() of boss if enemySpaceship._enemys == [];
         }
 
     },
@@ -105,7 +107,7 @@ lifeBonus = {
     width: 30,
     height: 30,
     downSpeed: 1,
-    insertTime: 1600,
+    insertTime: 2000,
 
     // Function responsible for inserting meteors in the _meteors array
     insert() {
@@ -118,7 +120,7 @@ lifeBonus = {
             })
     
             // Related to the time each ship will appear
-            this.insertTime = 1600 + Math.floor(61 * Math.random());
+            this.insertTime = 2000 + Math.floor(61 * Math.random());
         }
     },
 
@@ -170,6 +172,7 @@ lifeBonus = {
 
 },
 
+
 shot = {
 
     _shots: [],
@@ -196,15 +199,16 @@ shot = {
                 if (shot.y >= 10) {
                     this._shots[i].y -= this.speed;
                     
-                    // Loop to check if the bullet will hit enemy aircraft (j)
+                    // Loop to check if the bullet will hit any enemy aircraft (j)
                     for (let j = 0; j < enemySpaceship._enemys.length; j++) {
-                        let enemy = enemySpaceship._enemys[j];
+                        let enemyJ = enemySpaceship._enemys[j];
 
                         // Colliding with enemy spaceships
                         if (
-                            shot.x + shot.width >= enemy.x 
-                            && shot.x <= enemy.x + enemy.width 
-                            && shot.y <= enemy.y + enemy.height
+                            shot.x + shot.width >= enemyJ.x 
+                            && shot.x <= enemyJ.x + enemyJ.width 
+                            && shot.y <= enemyJ.y + enemyJ.height
+                            && shot.y + enemyJ.height >= enemyJ.y
                             ) {
                             this._shots.splice(i, 1);
 
@@ -213,6 +217,38 @@ shot = {
                             spaceship.score++;
                         }
                         
+                    }
+
+                    // Loop to check if the bullet will hit any meteor (K)
+                    for (let k = 0; k < meteor._meteors.length; k++) {
+                        let meteorK = meteor._meteors[k];
+
+                        // Colliding with meteors
+                        if (
+                            shot.x + shot.width >= meteorK.x 
+                            && shot.x <= meteorK.x + meteorK.width 
+                            && shot.y <= meteorK.y + meteorK.height
+                            && shot.y + shot.height >= meteorK.y
+                           ) {
+                               this._shots.splice(i, 1);
+
+                               // If the shot strikes the meteor, remove the meteor from the meteors array
+                               meteorK.life -= 1;
+                               if (meteorK.life == 0) {
+                                    meteor._meteors.splice(k, 1);
+                               }
+                           }
+
+                    }
+
+                    // Colliding with alien boss
+                    if (
+                        shot.y <= alienBoss.y + alienBoss.height
+                        && shot.x >= alienBoss.x
+                        && shot.x <= alienBoss.x + alienBoss.width
+                        ) {
+                        alienBoss.lifes -= 1;
+                        this._shots.splice(i, 1);
                     }
 
                 } else { // If reach the end of the screen, remove the shot from the array
@@ -237,7 +273,91 @@ shot = {
 
     }
 
-}
+},
+
+// Boss score 75
+alienBoss = {
+
+    _shots: [],
+    shotInsertTime: 0,
+
+    x: canvas.width / 2 - 160,
+    y: canvas.height / 2 - 500,
+    width: 320,
+    height: 150,
+    lifes: 150,
+    speed: 0.5,
+    
+    update() {
+        if (this.y <= canvas.width / 2 - this.height - 280) {
+            this.lifes = 150; // To prevent the player from spamming shots before the boss arrives and killing him
+            this.y += this.speed;
+        } else {
+            // When he stops, start shooting  
+            if (this.shotInsertTime == 0) {
+                // Boss shoot object
+                this._shots.push({
+                    x: alienBoss.x + Math.floor(290 * Math.random()),
+                    y: alienBoss.y + alienBoss.height,
+                    width: 35,
+                    height: 50,
+                    speed: 4.2,
+                });
+
+                this.shotInsertTime = 42;
+
+            } else {
+                this.shotInsertTime--;
+            }
+
+            // Loop all bullets fired from the alien boss
+            for (let i = 0; i < this._shots.length; i++) {
+                let alienBossShot = this._shots[i];
+
+                alienBossShot.y += alienBossShot.speed;
+                if (alienBossShot.y >= canvas.height) {
+                    this._shots.splice(i, 1);
+                }
+
+                // Collision with the spaceship
+                if (
+                    spaceship.x + spaceship.width >= alienBossShot.x 
+                    && spaceship.x <= alienBossShot.x + alienBossShot.width 
+                    && spaceship.y <= alienBossShot.y + alienBossShot.height 
+                    && spaceship.y + spaceship.height >= alienBossShot.y
+                    ) {
+                    this._shots.splice(i, 1);
+                    spaceship.lifes -= 1;
+                }
+
+            } // loop end
+
+        }
+
+        if (this.lifes == 0) {
+            resetSpeed();
+            lifeBonus.insert();
+            spaceship.score++;
+            
+            bossPhase = false;
+        }
+
+    },
+
+    draw() {
+       spriteAlienBoss.draw(this.x, this.y);
+
+        if (this._shots.length != 0) {
+            for (i in this._shots) {
+
+                let alienBossShot = this._shots[i]
+                spriteAlienBossShot.draw(alienBossShot.x, alienBossShot.y);
+
+            }
+        }
+    }
+
+},
 
 enemySpaceship = {
 
@@ -376,98 +496,6 @@ meteor = {
         this._meteors = [];
     }
 
-},
-
-shot = {
-
-    _shots: [],
-
-    height: 10,
-    width: 30,
-    speed: 20,
-
-    fire() {
-        // When space is pressed, a new Bullet object will be instantiated
-        if (currentState == states.playing && currentState != states.lose)
-            this._shots.push(new Bullet(spaceship.x + spaceship.width / 2 - 15, spaceship.y, this.width, this.height));
-    },
-
-    update() {
-
-        // Each bullet is an object within the _shots array
-        if (this._shots.length != 0) {
-            // Loop to look at each bullet (i) and see if it will collide or leave the screen
-            for (i in this._shots) {
-                let shot = this._shots[i]
-
-                // If your Y is less than 0px (range of canvas height - shot.height), keep decreasing the speed of shot
-                if (shot.y >= 10) {
-                    this._shots[i].y -= this.speed;
-                    
-                    // Loop to check if the bullet will hit any enemy aircraft (j)
-                    for (let j = 0; j < enemySpaceship._enemys.length; j++) {
-                        let enemyJ = enemySpaceship._enemys[j];
-
-                        // Colliding with enemy spaceships
-                        if (
-                            shot.x + shot.width >= enemyJ.x 
-                            && shot.x <= enemyJ.x + enemyJ.width 
-                            && shot.y <= enemyJ.y + enemyJ.height
-                            && shot.y + enemyJ.height >= enemyJ.y
-                            ) {
-                            this._shots.splice(i, 1);
-
-                            // If the shot strikes the ship, remove the ship from the enemys array
-                            enemySpaceship._enemys.splice(j, 1)
-                            spaceship.score++;
-                        }
-                        
-                    }
-
-                    // Loop to check if the bullet will hit any meteor (K)
-                    for (let k = 0; k < meteor._meteors.length; k++) {
-                        let meteorK = meteor._meteors[k];
-
-                        // Colliding with meteors
-                        if (
-                            shot.x + shot.width >= meteorK.x 
-                            && shot.x <= meteorK.x + meteorK.width 
-                            && shot.y <= meteorK.y + meteorK.height
-                            && shot.y + shot.height >= meteorK.y
-                           ) {
-                               this._shots.splice(i, 1);
-
-                               // If the shot strikes the meteor, remove the meteor from the meteors array
-                               meteorK.life -= 1;
-                               if (meteorK.life == 0) {
-                                    meteor._meteors.splice(k, 1);
-                               }
-                           }
-
-                    }
-
-                } else { // If reach the end of the screen, remove the shot from the array
-                    this._shots.splice(i, 1);
-                }
-
-            }
-        }
-    },
-
-    draw() {
-
-        if (this._shots.length != 0) {
-            for (i in this._shots) {
-
-                let shot = this._shots[i]
-                spriteShoot.draw(shot.x, shot.y)
-                // ctx.fillRect(shot.x, shot.y, shot.width, shot.height);
-
-            }
-        }
-
-    }
-
 }
 
 function run() {
@@ -483,6 +511,11 @@ function update() {
     lifeBonus.update();
     meteor.update();
     shot.update();
+
+
+    if (bossPhase == true && spaceship.score == 75) {
+        alienBoss.update();
+    }
 }
 
 function draw() {
@@ -504,6 +537,11 @@ function draw() {
         lifeBonus.draw();
         meteor.draw();
         shot.draw();
+
+        // Drawing alien boss if the score is 75
+        if (bossPhase == true && spaceship.score == 75) {
+            alienBoss.draw();
+        }
 
         ctx.fillText(spaceship.score, 30, 68);
     }
