@@ -97,13 +97,15 @@ shot = {
     fire() {
         // When space is pressed, a new Bullet object will be instantiated
         if (currentState == states.playing)
-            // Instantiating a shot object
-            this._shots.push({
-                x: spaceship.x + spaceship.width / 2 - 15,
-                y: spaceship.y,
-                width: this.width,
-                height: this.height
-            });
+            // Instantiating a shot object if there are 5 or fewer shots on the screen
+            if (this._shots.length <= 5) {
+                this._shots.push({
+                    x: spaceship.x + spaceship.width / 2 - 15,
+                    y: spaceship.y,
+                    width: this.width,
+                    height: this.height
+                });
+            }
     },
 
     update() {
