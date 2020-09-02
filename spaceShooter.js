@@ -982,6 +982,7 @@ function update() {
             spaceship.resetPosition();
 
             enemySpaceship.clean();
+            enemySpaceship.lifes = 1;
             meteor.clean();
             
             lifeBonus.clean();
