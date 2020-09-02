@@ -8,4 +8,4 @@
 Arcade-style shooting game with spaceships containing 4 bosses, made in JavaScript
 
 ## Link to play
-https://caioreigot.github.io/slimejump
+https://caioreigot.github.io/space-shooter
