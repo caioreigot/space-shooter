@@ -360,6 +360,10 @@ lifeBonus = {
 
     clean() {
         this._lifes = [];
+    },
+
+    resetInsertTime() {
+        this.insertTime = 2000;
     }
 
 },
@@ -571,6 +575,12 @@ alienBoss = {
 
             }
         }
+    },
+
+    resetBoss() {
+        this.x = canvas.width / 2 - 160;
+        this.y = -200;
+        this._shots = [];
     }
 
 },
@@ -667,6 +677,12 @@ theBigShip = {
 
             }
         }
+    },
+
+    resetBoss() {
+        this.x = canvas.width / 2 - 197.5;
+        this.y = -400;
+        this.dirX = -1;
     }
 
 }
@@ -771,6 +787,14 @@ galacticBoat = {
 
             }
         }
+    },
+
+    resetBoss() {
+        this.x = canvas.width + 350;
+        this.y = canvas.width / 2 - 243 - 260;
+        this.orbInsertTime = 300;
+        this.lifes = 10;
+        this.orbInsertTime = 300;
     }
 
 }
@@ -932,6 +956,15 @@ cuteCat = {
 
             }
         }
+    },
+
+    resetBoss() {
+        this.x = canvas.width / 2 - 44.5;
+        this.y = -200;
+        this.lifes = 25;
+        this.wallInsertTime = 0;
+        this.wallRemovedCount = 0;
+        this._walls = [];
     }
 
 }
@@ -966,6 +999,10 @@ function update() {
         galacticBoat.update();
       } else if (bossPhase == true && spaceship.score == 300) {
           cuteCat.update();
+      }
+
+      if (currentState == states.lose) {
+            resetBosses();
       }
 
 }
@@ -1114,6 +1151,13 @@ function resetSpeed() {
     enemyInsertionSpeed = 60;
     meteorInsertionSpeed = 200;
     enemySpaceship.speed = 3;
+}
+
+function resetBosses() {
+    alienBoss.resetBoss();
+    theBigShip.resetBoss();
+    galacticBoat.resetBoss();
+    cuteCat.resetBoss();
 }
 
 function onMouseDown(e) {
