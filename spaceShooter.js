@@ -1009,7 +1009,14 @@ function update() {
 
       if (currentState == states.lose) {
             resetBosses();
+
+            enemySpaceship.clean();
+            meteor.clean();
             lifeBonus.clean();
+    
+            spaceship.resetPosition();
+    
+            bossPhase = false;
       }
 
 }
@@ -1107,14 +1114,6 @@ function draw() {
 
     // When losing, show the scoreboard, with the player's score and his record
     if (currentState == states.lose) {
-        enemySpaceship.clean();
-        meteor.clean();
-        lifeBonus.clean();
-
-        spaceship.resetPosition();
-
-        bossPhase = false;
-
         spriteScoreboard.draw(canvas.width / 2 - spriteScoreboard.width / 2, canvas.height / 2 - spriteScoreboard.height / 2);
 
         // Showing the score and record on the scoreboard
