@@ -794,7 +794,8 @@ galacticBoat = {
         this.y = canvas.width / 2 - 243 - 260;
         this.orbInsertTime = 300;
         this.lifes = 10;
-        this.orbInsertTime = 300;
+        this._shots = [];
+        orb.clean();
     }
 
 }
@@ -849,7 +850,12 @@ orb = {
 
             spriteGalacticBoatBossOrb.draw(orb.x, orb.y);
         }
+    },
+
+    clean() {
+        this._orbs = [];
     }
+
 },
 
 // Boss of score 300 (last boss)
@@ -1003,6 +1009,7 @@ function update() {
 
       if (currentState == states.lose) {
             resetBosses();
+            lifeBonus.clean();
       }
 
 }
@@ -1078,7 +1085,7 @@ function draw() {
             ctx.fillText('INFINITE TIME', canvas.width - 620, 280);
             
             ctx.font = '25px Arial';
-            ctx.fillText('Congratulations! You killed all the bosses', canvas.width - 676, 320);
+            ctx.fillText('Congratulations! you have beaten all the bosses!', canvas.width - 720, 320);
         }
 
     }
