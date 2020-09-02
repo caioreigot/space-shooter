@@ -2,7 +2,7 @@ const canvas = document.getElementById('mycanvas');
 const ctx = canvas.getContext('2d');
 
 // Game variables
-let keys = {}, currentState, enemyInsertionSpeed = 64, meteorInsertionSpeed = 250, bossPhase = false,
+let keys = {}, currentState, enemyInsertionSpeed = 65, meteorInsertionSpeed = 250, bossPhase = false,
 
 states = {
     play: 0,
@@ -1128,7 +1128,7 @@ function draw() {
 
 // Used to go back to the default "difficulty"
 function resetSpeed() {
-    enemyInsertionSpeed = 64;
+    enemyInsertionSpeed = 65;
     meteorInsertionSpeed = 250;
     enemySpaceship.speed = 2.7;
 }
@@ -1142,13 +1142,13 @@ function spaceshipScoreLevel() {
 
     // Increasing enemy and meteor insertion time (difficulty)
     if ([25, 100, 175, 250, 325].indexOf(spaceship.score) >= 0) {
-        enemyInsertionSpeed = 58;
-        meteorInsertionSpeed = 230;
+        enemyInsertionSpeed = 62;
+        meteorInsertionSpeed = 235;
     }
 
     if ([50, 125, 200, 275, 350].indexOf(spaceship.score) >= 0) {
-        enemyInsertionSpeed = 54;
-        meteorInsertionSpeed = 215;
+        enemyInsertionSpeed = 60;
+        meteorInsertionSpeed = 220;
     }
 
     if ([75, 150, 225, 300].indexOf(spaceship.score) >= 0) {
@@ -1163,13 +1163,13 @@ function spaceshipScoreLevel() {
     // With this (if spaceship.score > 350) the program will only read this if, and not the if and else if below
     if (spaceship.score > 350) {
         if (spaceship.score == 375) {
-            enemyInsertionSpeed = 44;
+            enemyInsertionSpeed = 50;
             enemySpaceship.speed = 3.2;
         } else if (spaceship.score == 450) {
-            enemyInsertionSpeed = 42;
-            enemySpaceship.speed = 3.6;
+            enemyInsertionSpeed = 45;
+            enemySpaceship.speed = 3.5;
         } else if (spaceship.score == 500) {
-            enemyInsertionSpeed = 33;
+            enemyInsertionSpeed = 35;
         }
     }
 
