@@ -15,8 +15,10 @@ spaceship = {
     y: canvas.height - 60,
     width: 60, 
     height: 50,
+
     leftRightSpeed: 12,
     upDownSpeed: 10,
+
     score: 0,
     lifes: 3,
 
@@ -50,43 +52,10 @@ spaceship = {
 
         if (this.lifes == 0) {
             currentState = states.lose;
-
         }
 
-        // "Rest" time after killing the boss (3 points)
-        if ([78, 153, 228, 303].indexOf(this.score) >= 0) {
-            resetSpeed();
-        }
-
-        // Increasing enemy and meteor insertion time (difficulty)
-        if ([25, 100, 175, 250, 325].indexOf(this.score) >= 0) {
-            enemyInsertionSpeed = 50;
-            meteorInsertionSpeed = 180;
-        }
-
-        if ([50, 125, 200, 275, 350].indexOf(this.score) >= 0) {
-            enemyInsertionSpeed = 45;
-            meteorInsertionSpeed = 170;
-        }
-
-        if ([75, 150, 225, 300].indexOf(this.score) >= 0) {
-            bossPhase = true;
-            
-            if (spaceship.score == 300) {
-                meteor.clean();
-            }
-            // resetSpeed​​() is called when the boss dies
-        }
-
-        if (spaceship.score == 375) {
-            enemyInsertionSpeed = 40;
-            enemySpaceship.speed = 3.5;
-        } else if (spaceship.score == 450) {
-            enemyInsertionSpeed = 37;
-            enemySpaceship.speed = 4;
-        } else if (spaceship.score == 500) {
-            enemyInsertionSpeed = 33;
-        }
+        // Function responsible for increasing the difficulty according to the spaceship score and making changes depending on the score
+        spaceshipScoreLevel();
 
     },
 
@@ -128,8 +97,14 @@ shot = {
 
     fire() {
         // When space is pressed, a new Bullet object will be instantiated
-        if (currentState == states.playing && currentState != states.lose)
-            this._shots.push(new Bullet(spaceship.x + spaceship.width / 2 - 15, spaceship.y, this.width, this.height));
+        if (currentState == states.playing)
+            // Instantiating a shot object
+            this._shots.push({
+                x: spaceship.x + spaceship.width / 2 - 15,
+                y: spaceship.y,
+                width: this.width,
+                height: this.height
+            });
     },
 
     update() {
@@ -480,7 +455,7 @@ lifeBonus = {
 
 },
 
-// [>] All boss objects
+// All boss objects
 
 // Boss of score 75
 alienBoss = {
@@ -795,7 +770,7 @@ galacticBoat = {
 
 }
 
-// Related to galactic boat boss
+// Related to galactic boat boss (score 225)
 orb = {
 
     _orbs: [],
@@ -970,8 +945,7 @@ cuteCat = {
 
 }
 
-// [<] End of boss objects
-
+// Function that will run the game, drawing and updating information
 function run() {
     update();
     draw();
@@ -1145,13 +1119,6 @@ function draw() {
 
 }
 
-function Bullet(x, y, width, height) {
-    this.x = x;
-    this.y = y;
-    this.width = width;
-    this.height = height;
-}
-
 // Used to go back to the default "difficulty"
 function resetSpeed() {
     enemyInsertionSpeed = 60;
@@ -1159,6 +1126,46 @@ function resetSpeed() {
     enemySpaceship.speed = 3;
 }
 
+// Function responsible for increasing the difficulty according to the spaceship score and making changes depending on the score
+function spaceshipScoreLevel() {
+    // "Rest" time after killing the boss (3 points)
+    if ([78, 153, 228, 303].indexOf(spaceship.score) >= 0) {
+        resetSpeed();
+    }
+
+    // Increasing enemy and meteor insertion time (difficulty)
+    if ([25, 100, 175, 250, 325].indexOf(spaceship.score) >= 0) {
+        enemyInsertionSpeed = 50;
+        meteorInsertionSpeed = 180;
+    }
+
+    if ([50, 125, 200, 275, 350].indexOf(spaceship.score) >= 0) {
+        enemyInsertionSpeed = 45;
+        meteorInsertionSpeed = 170;
+    }
+
+    if ([75, 150, 225, 300].indexOf(spaceship.score) >= 0) {
+        bossPhase = true;
+        
+        if (spaceship.score == 300) {
+            meteor.clean();
+        }
+        // resetSpeed​​() is called when the boss dies
+    }
+
+    if (spaceship.score == 375) {
+        enemyInsertionSpeed = 40;
+        enemySpaceship.speed = 3.5;
+    } else if (spaceship.score == 450) {
+        enemyInsertionSpeed = 37;
+        enemySpaceship.speed = 4;
+    } else if (spaceship.score == 500) {
+        enemyInsertionSpeed = 33;
+    }
+
+}
+
+// Reset boss positions and variables when dying
 function resetBosses() {
     alienBoss.resetBoss();
     theBigShip.resetBoss();
@@ -1166,6 +1173,7 @@ function resetBosses() {
     cuteCat.resetBoss();
 }
 
+// Event listeners
 function onMouseDown(e) {
     if (e.button == 0) {
         shot.fire();
@@ -1204,6 +1212,7 @@ function onKeyUp(e) {
     delete keys[e.keyCode];
 }
 
+// Main function, called for the first time to make initial settings
 function main() {
 
     // Loading the sheet image
@@ -1222,7 +1231,8 @@ function main() {
     if (record == null) {
         record = 0;
     }
-
+    
+    // Function that will run the game, drawing and updating information
     run();
 }
 
