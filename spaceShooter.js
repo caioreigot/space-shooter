@@ -214,7 +214,7 @@ enemySpaceship = {
     
     width: 50,
     height: 40,
-    speed: 3,
+    speed: 2.7,
     lifes: 1,
     insertTime: 0,
 
@@ -1128,7 +1128,7 @@ function draw() {
 function resetSpeed() {
     enemyInsertionSpeed = 60;
     meteorInsertionSpeed = 200;
-    enemySpaceship.speed = 3;
+    enemySpaceship.speed = 2.7;
 }
 
 // Function responsible for increasing the difficulty according to the spaceship score and making changes depending on the score
@@ -1162,10 +1162,10 @@ function spaceshipScoreLevel() {
     if (spaceship.score > 350) {
         if (spaceship.score == 375) {
             enemyInsertionSpeed = 40;
-            enemySpaceship.speed = 3.5;
+            enemySpaceship.speed = 3.2;
         } else if (spaceship.score == 450) {
             enemyInsertionSpeed = 37;
-            enemySpaceship.speed = 4;
+            enemySpaceship.speed = 3.6;
         } else if (spaceship.score == 500) {
             enemyInsertionSpeed = 33;
         }
