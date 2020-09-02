@@ -982,7 +982,9 @@ function update() {
 
             enemySpaceship.clean();
             meteor.clean();
+            
             lifeBonus.clean();
+            lifeBonus.resetInsertTime();
     
             bossPhase = false;
 
@@ -1136,12 +1138,12 @@ function spaceshipScoreLevel() {
     // Increasing enemy and meteor insertion time (difficulty)
     if ([25, 100, 175, 250, 325].indexOf(spaceship.score) >= 0) {
         enemyInsertionSpeed = 50;
-        meteorInsertionSpeed = 180;
+        meteorInsertionSpeed = 190;
     }
 
     if ([50, 125, 200, 275, 350].indexOf(spaceship.score) >= 0) {
         enemyInsertionSpeed = 45;
-        meteorInsertionSpeed = 170;
+        meteorInsertionSpeed = 180;
     }
 
     if ([75, 150, 225, 300].indexOf(spaceship.score) >= 0) {
