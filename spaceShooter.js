@@ -37,7 +37,6 @@ spaceship = {
         } else if (87 in keys && this.y > 0 && currentState == states.playing) {
             if (bossPhase == false)
                 this.y -= this.upDownSpeed;
-
             // Do not pass the y axis of each boss
             else if ([75, 150, 225].indexOf(spaceship.score) >= 0) {
                 if (spaceship.y >= 190)
@@ -965,16 +964,18 @@ function update() {
         meteor.update();
     }
 
-    if (bossPhase == true && spaceship.score == 75) {
-        alienBoss.update();
-      } else if (bossPhase == true && spaceship.score == 150) {
-        theBigShip.update();
-      } else if (bossPhase == true && spaceship.score == 225) {
-        orb.update();
-        galacticBoat.update();
-      } else if (bossPhase == true && spaceship.score == 300) {
-          cuteCat.update();
-      }
+    if (bossPhase == true) {
+        if (spaceship.score == 75) {
+            alienBoss.update();
+          } else if (spaceship.score == 150) {
+            theBigShip.update();
+          } else if (spaceship.score == 225) {
+            orb.update();
+            galacticBoat.update();
+          } else if (spaceship.score == 300) {
+              cuteCat.update();
+          }
+    }
 
       if (currentState == states.lose) {
             resetBosses();
@@ -1012,6 +1013,7 @@ function draw() {
     if (currentState == states.playing) {
         spaceship.draw();
         enemySpaceship.draw();
+
         lifeBonus.draw();
         meteor.draw();
         shot.draw();
@@ -1020,34 +1022,37 @@ function draw() {
         ctx.fillText(spaceship.score, 30, 68);
 
         // Drawing boss if the score is related to him
-        if (bossPhase == true && spaceship.score == 75) {
-            alienBoss.draw();
-
-            ctx.fillStyle = '#ff0000';
-            ctx.fillText(alienBoss.lifes, 30, 570)
-
-        } else if (bossPhase == true && spaceship.score == 150) {
-            theBigShip.draw();
-
-            ctx.fillStyle = '#ff0000';
-            ctx.fillText(theBigShip.lifes, 30, 570)
-
-        } else if (bossPhase == true && spaceship.score == 225) {
-            orb.draw();
-            galacticBoat.draw();
-
-            ctx.fillStyle = '#ff0000';
-            ctx.font = '25px Arial';
-            ctx.fillText(galacticBoat.lifes + ' orbs remaining', 30, 570)
-
-        } else if (bossPhase == true && spaceship.score == 300) {
-            cuteCat.draw();
-
-            ctx.fillStyle = '#ff0000';
-            ctx.font = '25px Arial';
-            ctx.fillText('dodge ' + cuteCat.lifes + ' more obstacles', 30, 570)
+        if (bossPhase == true) {
+            if (spaceship.score == 75) {
+                alienBoss.draw();
+    
+                ctx.fillStyle = '#ff0000';
+                ctx.fillText(alienBoss.lifes, 30, 570)
+    
+            } else if (spaceship.score == 150) {
+                theBigShip.draw();
+    
+                ctx.fillStyle = '#ff0000';
+                ctx.fillText(theBigShip.lifes, 30, 570)
+    
+            } else if (spaceship.score == 225) {
+                orb.draw();
+                galacticBoat.draw();
+    
+                ctx.fillStyle = '#ff0000';
+                ctx.font = '25px Arial';
+                ctx.fillText(galacticBoat.lifes + ' orbs remaining', 30, 570)
+    
+            } else if (spaceship.score == 300) {
+                cuteCat.draw();
+    
+                ctx.fillStyle = '#ff0000';
+                ctx.font = '25px Arial';
+                ctx.fillText('dodge ' + cuteCat.lifes + ' more obstacles', 30, 570)
+            }
+    
         }
-
+        
         // Warning that enemies have +1 health
         if (spaceship.score > 75 && spaceship.score <= 77) {
             ctx.fillStyle = '#ff0000';
@@ -1073,19 +1078,16 @@ function draw() {
 
     }
 
-    // Keep drawing spaceship life when lose the game
-    if (currentState == states.playing || currentState == states.lose) {
-
-        if (spaceship.lifes == 3) {
+    // Drawing spaceship life
+    if (currentState != states.play) {
+        if (spaceship.lifes == 3)
             sprite3Lifes.draw(730, 20);
-        } else if (spaceship.lifes == 2) {
+        else if (spaceship.lifes == 2)
             sprite2Lifes.draw(730, 20);
-        } else if (spaceship.lifes == 1) {
+        else if (spaceship.lifes == 1)
             sprite1Lifes.draw(730, 20);
-        } else {
+        else
             sprite0Lifes.draw(730, 20);
-        }
-
     }
 
     // When losing, show the scoreboard, with the player's score and his record
@@ -1149,20 +1151,23 @@ function spaceshipScoreLevel() {
     if ([75, 150, 225, 300].indexOf(spaceship.score) >= 0) {
         bossPhase = true;
         
-        if (spaceship.score == 300) {
+        if (spaceship.score == 300)
             meteor.clean();
-        }
+
         // resetSpeed​​() is called when the boss dies
     }
 
-    if (spaceship.score == 375) {
-        enemyInsertionSpeed = 40;
-        enemySpaceship.speed = 3.5;
-    } else if (spaceship.score == 450) {
-        enemyInsertionSpeed = 37;
-        enemySpaceship.speed = 4;
-    } else if (spaceship.score == 500) {
-        enemyInsertionSpeed = 33;
+    // With this (if spaceship.score > 350) the program will only read this if, and not the if and else if below
+    if (spaceship.score > 350) {
+        if (spaceship.score == 375) {
+            enemyInsertionSpeed = 40;
+            enemySpaceship.speed = 3.5;
+        } else if (spaceship.score == 450) {
+            enemyInsertionSpeed = 37;
+            enemySpaceship.speed = 4;
+        } else if (spaceship.score == 500) {
+            enemyInsertionSpeed = 33;
+        }
     }
 
 }
