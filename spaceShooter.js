@@ -1163,13 +1163,13 @@ function spaceshipScoreLevel() {
     // With this (if spaceship.score > 350) the program will only read this if, and not the if and else if below
     if (spaceship.score > 350) {
         if (spaceship.score == 375) {
-            enemyInsertionSpeed = 50;
+            enemyInsertionSpeed = 52;
             enemySpaceship.speed = 3.2;
         } else if (spaceship.score == 450) {
-            enemyInsertionSpeed = 45;
+            enemyInsertionSpeed = 47;
             enemySpaceship.speed = 3.5;
         } else if (spaceship.score == 500) {
-            enemyInsertionSpeed = 35;
+            enemyInsertionSpeed = 42;
         }
     }
 
