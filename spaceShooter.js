@@ -347,7 +347,7 @@ meteor = {
 
     animationIndex: 0,
     animationSpeed: 3,
-    maxAnimationSpeed: 5,
+    maxAnimationSpeed: 3,
     explosiumAnimation: false,
     lastMeteorAxis: {x: null, y: null},
 
