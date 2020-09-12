@@ -16,8 +16,8 @@ spaceship = {
     width: 60, 
     height: 50,
 
-    leftRightSpeed: 12,
-    upDownSpeed: 10,
+    leftRightSpeed: 10,
+    upDownSpeed: 8,
 
     score: 0,
     lifes: 3,
