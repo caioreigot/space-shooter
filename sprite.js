@@ -26,6 +26,13 @@ const sprite4PhaseEnemySpaceship = new Sprite(929, 517, 50, 40);
 const spriteMeteor1 = new Sprite(1185, 30, 50, 40);
 const spriteMeteor2 = new Sprite(1185, 86, 50, 40);
 
+// Smoke destruction animation
+const smoke1 = new Sprite(3885, 91, 46, 35);
+const smoke2 = new Sprite(3964, 86, 57, 50);
+const smoke3 = new Sprite(4057, 80, 75, 67);
+const smoke4 = new Sprite(3867, 178, 106, 96);
+const smoke5 = new Sprite(4010, 180, 122, 93);
+
 // "Menus"
 const spritePlay = new Sprite(1920, 0, 900, 600);
 const spriteScoreboard = new Sprite(1298, 16, 589, 476);
