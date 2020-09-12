@@ -1,6 +1,6 @@
 <div align="center">
   <a href="https://caioreigot.github.io/space-shooter" rel="nofollow">
-  <img src="https://user-images.githubusercontent.com/62410044/92007567-7f5eae00-ed1c-11ea-822f-dce6066711b1.gif">
+  <img src="https://user-images.githubusercontent.com/62410044/92987264-439fb300-f497-11ea-86e5-f3110aee0fad.gif">
   </a>
 </div>
 
