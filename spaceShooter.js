@@ -24,17 +24,16 @@ spaceship = {
 
     update() {
 
-        // keyCode A = 65 | keyCode D = 68
-        if (65 in keys && this.x > 0 && currentState == states.playing) {
+        if ("KeyA" in keys && this.x > 0 && currentState == states.playing) {
             this.x -= this.leftRightSpeed;
-        } else if (68 in keys && this.x < canvas.width - this.width && currentState == states.playing) {
+        } else if ("KeyD" in keys && this.x < canvas.width - this.width && currentState == states.playing) {
             this.x += this.leftRightSpeed;
         }
         
         // keyCode S = 83 | keyCode W = 87
-        if (83 in keys && this.y < canvas.height - spaceship.height && currentState == states.playing) {
+        if ("KeyS" in keys && this.y < canvas.height - spaceship.height && currentState == states.playing) {
             this.y += this.upDownSpeed;
-        } else if (87 in keys && this.y > 0 && currentState == states.playing) {
+        } else if ("KeyW" in keys && this.y > 0 && currentState == states.playing) {
             if (bossPhase == false)
                 this.y -= this.upDownSpeed;
             // Do not pass the y axis of each boss
@@ -1299,16 +1298,15 @@ function onMouseDown(e) {
 }
 
 function onKeyDown(e) {
-    keys[e.keyCode] = true;
+    keys[e.code] = true;
 
-    // keyCode spacebar = 32
-    if (e.keyCode == 32) {
+    if (e.code == "Space") {
         shot.fire();
     }
 
-    if (e.keyCode == 32 && currentState == states.play) {
+    if (e.code == "Space" && currentState == states.play) {
         currentState = states.playing;
-    } else if (e.keyCode == 32 && currentState == states.lose) {
+    } else if (e.code == "Space" && currentState == states.lose) {
         currentState = states.play;
         spaceship.resetScore();
         spaceship.resetLife();
@@ -1316,7 +1314,7 @@ function onKeyDown(e) {
 }
 
 function onKeyUp(e) {
-    delete keys[e.keyCode];
+    delete keys[e.code];
 }
 
 // Main function, called for the first time to make initial settings
